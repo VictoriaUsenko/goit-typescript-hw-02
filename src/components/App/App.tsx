@@ -45,7 +45,6 @@ export default function App() {
 
       fetchPhotos(query, page)
         .then((data: ITransformData[]) => {
-          console.log(data);
           if (data.length === 0) {
             return toast.error("No results for your query!", {
               duration: 3500,
