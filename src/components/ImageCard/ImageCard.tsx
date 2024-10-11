@@ -1,6 +1,8 @@
 import css from "./ImageCard.module.css";
 
-export default function ImageCard({ photo, modal, onOpen }) {
+import { ImageCardProps } from "./ImageCard.type";
+
+export default function ImageCard({ photo, modal, onOpen }: ImageCardProps) {
   const clickHandler = () => {
     if (!modal) {
       onOpen(photo);

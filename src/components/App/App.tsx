@@ -11,22 +11,15 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "../ImageModal/ImageModal";
 
+import { ITransformData } from "../../helpers/helpers";
+import { Modal, Query } from "./App.types";
+
 ReactModal.setAppElement("#root");
 
 export default function App() {
-  const [photos, setPhotos] = useState<[]>([]);
+  const [photos, setPhotos] = useState<ITransformData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  type Modal = {
-    isOpen: boolean;
-    photo: null | null;
-  };
-
-  type Query = {
-    query: string;
-    page: number;
-  };
 
   const [showModal, setShowModal] = useState<Modal>({
     isOpen: false,
@@ -36,22 +29,23 @@ export default function App() {
   const [query, setQuery] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
-  const updateQuery = (queryString: string): void => {
+  const updateQuery = (queryString: string | null): void => {
     setPage(1);
     setQuery(queryString);
   };
 
   useEffect(() => {
-    makeRequest(query, page);
+    makeRequest({ query, page });
   }, [query, page]);
 
-  const makeRequest = (query, page) => {
+  const makeRequest = ({ query, page }: Query) => {
     if (query) {
       setLoading(true);
       setError(false);
 
       fetchPhotos(query, page)
-        .then((data) => {
+        .then((data: ITransformData[]) => {
+          console.log(data);
           if (data.length === 0) {
             return toast.error("No results for your query!", {
               duration: 3500,
@@ -77,12 +71,16 @@ export default function App() {
     }
   };
 
-  const openImage = (photo) => {
+  const openImage = (photo: ITransformData) => {
     setShowModal({ isOpen: true, photo });
   };
 
   const closeImage = () => {
     setShowModal({ isOpen: false, photo: null });
+  };
+
+  const handleLoadMoreClick = () => {
+    setPage((prevPage) => prevPage + 1);
   };
 
   return (
@@ -92,19 +90,24 @@ export default function App() {
       {photos.length > 0 && !error && (
         <ImageGallery photos={photos} onOpen={openImage} />
       )}
-      <MutatingDotsLoader
-        visible={loading}
-        height="130"
-        width="130"
-        color="#6d32f5"
-        secondaryColor="#ee20f6"
-        radius="15"
-        ariaLabel="mutating-dots-loading"
-        wrapperStyle={{}}
-        wrapperClass="load-wrapper"
-      />
+      {loading && (
+        <MutatingDotsLoader
+          visible={loading}
+          height="130"
+          width="130"
+          color="#6d32f5"
+          secondaryColor="#ee20f6"
+          radius="15"
+          ariaLabel="mutating-dots-loading"
+          wrapperStyle={{}}
+          wrapperClass="load-wrapper"
+        />
+      )}
       {photos.length > 0 && !error && (
-        <LoadMoreBtn onLoading={loading} setPage={setPage} />
+        <LoadMoreBtn
+          onLoading={loading}
+          handleLoadMoreClick={handleLoadMoreClick}
+        />
       )}
       <Toaster />
       <ImageModal showModal={showModal} closeModal={closeImage} />

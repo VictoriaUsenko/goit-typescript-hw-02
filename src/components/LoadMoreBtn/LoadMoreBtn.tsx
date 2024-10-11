@@ -1,11 +1,15 @@
 import css from "./LoadMoreBtn.module.css";
+import { LoadMoreBtnProps } from "./LoadMoreBtn.type";
 
-export default function LoadMoreBtn({ onLoading, setPage }) {
+export default function LoadMoreBtn({
+  onLoading,
+  handleLoadMoreClick,
+}: LoadMoreBtnProps) {
   return (
     <button
       type="button"
       className={css.btn}
-      onClick={() => setPage((prevPage) => prevPage + 1)}
+      onClick={handleLoadMoreClick}
       disabled={onLoading}
     >
       Load more

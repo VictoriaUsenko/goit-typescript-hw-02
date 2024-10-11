@@ -1,7 +1,9 @@
 import css from "./ImageGallery.module.css";
 import ImageCard from "../ImageCard/ImageCard";
 
-export default function ImageGallery({ photos, onOpen }) {
+import { ImageGalleryProps } from "./ImageGallery.type";
+
+export default function ImageGallery({ photos, onOpen }: ImageGalleryProps) {
   return (
     <ul className={css.ul}>
       {photos.map((photo) => (
